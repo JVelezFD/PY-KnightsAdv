@@ -6,6 +6,19 @@ GRID_SIZE = 50
 
 WIDTH = GRID_WIDTH * GRID_SIZE 
 HEIGHT = GRID_HEIGHT * GRID_SIZE
+map = ["WWWWWWWWWWWWWWWW", 
+        "W              W",
+        "W              W",
+        "W   W KG       W",
+        "W  WWWWWWWWW  W",
+        "W              W",
+        "W      P       W",
+        "W  WWWWWWWWW   W",
+        "W      GK  W   W", 
+        "W              W",
+        "W              D",
+        "WWWWWWWWWWWWWWWW"
+        ]
 
 def screen_coords(x, y):
     return (x * GRID_SIZE, y * GRID_SIZE)
