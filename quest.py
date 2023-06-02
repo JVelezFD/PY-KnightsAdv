@@ -23,6 +23,9 @@ MAP = [ "WWWWWWWWWWWWWWWW",
 def screen_coords(x, y):
     return (x * GRID_SIZE, y * GRID_SIZE)
 
+def grid_coords(actor):
+    return (round(actor.x/GRID_SIZE),round(actor.y/GRID_SIZE))
+
 def setup_game():
     global player
     player = Actor("player", anchor=("left", "top"))
@@ -53,6 +56,27 @@ def draw():
     draw_background() 
     draw_scenery()
     draw_actors()
+    
+def on_key_down(key):
+    if key == keys.LEFT:
+        move_player(-1,0)
+    elif key == keys.UP:
+        move_player(0,-1)
+    elif key == keys.RIGHT:
+        move_player(1,0)
+    elif key == keys.DOWN:
+        move_player(0,1)
+    
+def move_player (dx, dy):
+    (x, y) = grid_coords(player)
+    x += dx
+    y += dy
+    square = MAP [y][x]
+    if square == "W":
+        return 
+    elif square == "D":
+        return
+    player.pos = screen_coords(x, y)
 
 setup_game()
 pgzrun.go()
