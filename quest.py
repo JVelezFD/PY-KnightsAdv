@@ -27,7 +27,8 @@ def grid_coords(actor):
     return (round(actor.x/GRID_SIZE),round(actor.y/GRID_SIZE))
 
 def setup_game():
-    global player, keys_to_collect
+    global game_over, player, keys_to_collect
+    game_over = False
     player = Actor("player", anchor=("left", "top"))
     keys_to_collect = []
     for y in range(GRID_HEIGHT):
@@ -55,6 +56,8 @@ def draw_scenery():
 
 def draw_actors():
     player.draw()
+    for key in keys_to_collect:
+        key.draw()
 
 def draw():
     draw_background() 
@@ -72,6 +75,9 @@ def on_key_down(key):
         move_player(0,1)
     
 def move_player (dx, dy):
+    global game_over
+    if game_over:
+        return
     (x, y) = grid_coords(player)
     x += dx
     y += dy
@@ -79,7 +85,15 @@ def move_player (dx, dy):
     if square == "W":
         return 
     elif square == "D":
-        return
+        if len(keys_to_collect) > 0:
+            return
+        else: 
+            game_over = True
+    for key in keys_to_collect:
+        (key_x, key_y) = grid_coords(key)
+        if x == key_x and y == key_y:
+            keys_to_collect.remove(key)
+            break
     player.pos = screen_coords(x, y)
 
 setup_game()
