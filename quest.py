@@ -27,10 +27,11 @@ def grid_coords(actor):
     return (round(actor.x/GRID_SIZE),round(actor.y/GRID_SIZE))
 
 def setup_game():
-    global game_over, player, keys_to_collect
+    global game_over, player, keys_to_collect, guards
     game_over = False
     player = Actor("player", anchor=("left", "top"))
     keys_to_collect = []
+    guards = []
     for y in range(GRID_HEIGHT):
         for x in range(GRID_WIDTH):
             square = MAP[y][x]
@@ -39,6 +40,9 @@ def setup_game():
             elif square == "K":
                 key = Actor("key", anchor=("left", "top"), pos=screen_coords(x,y))
                 keys_to_collect.append(key)
+            elif square == "G":
+                guard = Actor("guard", anchor=("left", "top"), pos= screen_coords(x,y))
+                guards.append(guard)    
 
 def draw_background():
     for y in range(GRID_HEIGHT):
@@ -58,6 +62,8 @@ def draw_actors():
     player.draw()
     for key in keys_to_collect:
         key.draw()
+    for guard in guards: 
+        guard.draw()
 
 def draw():
     draw_background() 
@@ -95,6 +101,29 @@ def move_player (dx, dy):
             keys_to_collect.remove(key)
             break
     player.pos = screen_coords(x, y)
+    
+def move_guard(guard):
+    global game_over
+    if game_over:
+        return
+    (player_x, player_y) = grid_coords(player)
+    (guard_x, guard_y) = grid_coords(guard)
+    
+    if player_x > guard_x and MAP[guard_y] [guard_x +1] !="W":
+        guard_x +=1
+    elif player_x < guard_x and MAP[guard_y] [guard_x -1] !="W":
+        guard_x -=1
+    elif player_y > guard_y and MAP[guard_y + 1] [guard_x] != "W":
+        guard_y += 1
+    elif player_y < guard_y and MAP[guard_y - 1] [guard_x] != "W":
+        guard_y -= 1
+    guard.pos = screen_coords(guard_x, guard_y)
+    if guard_x == player_x and guard_y == player_y:
+        game_over = True
+        
+    def move_guards():
+        for guard in guards:
+            move_guard(guard)
 
 setup_game()
 pgzrun.go()
