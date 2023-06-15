@@ -127,9 +127,9 @@ def move_guard(guard):
     if guard_x == player_x and guard_y == player_y:
         game_over = True
         
-    def move_guards():
-        for guard in guards:
-            move_guard(guard)
+def move_guards():
+    for guard in guards:
+        move_guard(guard)
 
 setup_game()
 pgzrun.go()
