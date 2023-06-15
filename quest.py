@@ -57,6 +57,10 @@ def draw_scenery():
                 screen.blit("wall",screen_coords(x, y))
             elif square == "D":
                 screen.blit("door", screen_coords(x, y))
+                
+def draw_game_over():
+    screen_middle = (WIDTH/2, HEIGHT/2)
+    screen.draw.text("GAME OVER", midbottom=screen_middle, fontsize = GRID_SIZE, color = "cyan", owidth=1)
 
 def draw_actors():
     player.draw()
@@ -69,6 +73,8 @@ def draw():
     draw_background() 
     draw_scenery()
     draw_actors()
+    if game_over:
+        draw_game_over()
     
 def on_key_down(key):
     if key == keys.LEFT:
