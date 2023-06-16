@@ -40,9 +40,6 @@ def setup_game():
             elif square == "K":
                 key = Actor("key", anchor=("left", "top"), pos=screen_coords(x,y))
                 keys_to_collect.append(key)
-            elif square == "G":
-                guard = Actor("guard", anchor = ("left","top"), pos= screen_coords(x, y))
-                guards.append(guard)
 
 def draw_background():
     for y in range(GRID_HEIGHT):
@@ -57,19 +54,15 @@ def draw_scenery():
                 screen.blit("wall",screen_coords(x, y))
             elif square == "D":
                 screen.blit("door", screen_coords(x, y))
+                
+def draw_game_over():
+    screen_middle = (WIDTH/2, HEIGHT/2)
+    screen.draw.text("GAME OVER", midbottom=screen_middle, fontsize = GRID_SIZE, color = "cyan", owidth=1)
 
 def draw_actors():
     player.draw()
     for key in keys_to_collect:
         key.draw()
-        
-    for guard in guards:
-        guard.draw()
-        
-        
-def draw_game_over():
-    screen_middle = (WIDTH/2, HEIGHT/2)
-    screen.draw.text("GAME OVER", midbottome=screen_middle, fontsize = GRID_SIZE, color = "cyan", owidth= 1)
 
 def draw():
     draw_background() 
@@ -109,6 +102,29 @@ def move_player (dx, dy):
             keys_to_collect.remove(key)
             break
     player.pos = screen_coords(x, y)
+    
+def move_guard(guard):
+    global game_over
+    if game_over:
+        return
+    (player_x, player_y) = grid_coords(player)
+    (guard_x, guard_y) = grid_coords(guard)
+    
+    if player_x > guard_x and MAP[guard_y] [guard_x +1] !="W":
+        guard_x +=1
+    elif player_x < guard_x and MAP[guard_y] [guard_x -1] !="W":
+        guard_x -=1
+    elif player_y > guard_y and MAP[guard_y + 1] [guard_x] != "W":
+        guard_y += 1
+    elif player_y < guard_y and MAP[guard_y - 1] [guard_x] != "W":
+        guard_y -= 1
+    guard.pos = screen_coords(guard_x, guard_y)
+    if guard_x == player_x and guard_y == player_y:
+        game_over = True
+        
+def move_guards():
+    for guard in guards:
+        move_guard(guard)
 
 setup_game()
 pgzrun.go()
