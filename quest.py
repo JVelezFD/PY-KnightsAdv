@@ -27,10 +27,11 @@ def grid_coords(actor):
     return (round(actor.x/GRID_SIZE),round(actor.y/GRID_SIZE))
 
 def setup_game():
-    global game_over, player, keys_to_collect
+    global game_over, player, keys_to_collect, guards
     game_over = False
     player = Actor("player", anchor=("left", "top"))
     keys_to_collect = []
+    guards = []
     for y in range(GRID_HEIGHT):
         for x in range(GRID_WIDTH):
             square = MAP[y][x]
@@ -39,6 +40,9 @@ def setup_game():
             elif square == "K":
                 key = Actor("key", anchor=("left", "top"), pos=screen_coords(x,y))
                 keys_to_collect.append(key)
+            elif square == "G":
+                guard = Actor("guard", anchor = ("left","top"), pos= screen_coords(x, y))
+                guards.append(guard)
 
 def draw_background():
     for y in range(GRID_HEIGHT):
@@ -58,11 +62,21 @@ def draw_actors():
     player.draw()
     for key in keys_to_collect:
         key.draw()
+        
+    for guard in guards:
+        guard.draw()
+        
+        
+def draw_game_over():
+    screen_middle = (WIDTH/2, HEIGHT/2)
+    screen.draw.text("GAME OVER", midbottome=screen_middle, fontsize = GRID_SIZE, color = "cyan", owidth= 1)
 
 def draw():
     draw_background() 
     draw_scenery()
     draw_actors()
+    if game_over:
+        draw_game_over()
     
 def on_key_down(key):
     if key == keys.LEFT:
