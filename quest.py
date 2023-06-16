@@ -3,6 +3,7 @@ import pgzrun
 GRID_WIDTH = 16
 GRID_HEIGHT = 12
 GRID_SIZE = 50
+GUARD_MOVE_INTERVAL = 0.5
 
 WIDTH = GRID_WIDTH * GRID_SIZE 
 HEIGHT = GRID_HEIGHT * GRID_SIZE
@@ -27,8 +28,9 @@ def grid_coords(actor):
     return (round(actor.x/GRID_SIZE),round(actor.y/GRID_SIZE))
 
 def setup_game():
-    global game_over, player, keys_to_collect, guards
+    global game_over, player_won, player, keys_to_collect, guards
     game_over = False
+    player_won = False
     player = Actor("player", anchor=("left", "top"))
     keys_to_collect = []
     guards = []
@@ -40,6 +42,9 @@ def setup_game():
             elif square == "K":
                 key = Actor("key", anchor=("left", "top"), pos=screen_coords(x,y))
                 keys_to_collect.append(key)
+            elif square == "G":
+                guard = Actor("guard", anchor=("left", "top"), pos=screen_coords(x,y))
+                guards.append(guard)
 
 def draw_background():
     for y in range(GRID_HEIGHT):
@@ -58,11 +63,18 @@ def draw_scenery():
 def draw_game_over():
     screen_middle = (WIDTH/2, HEIGHT/2)
     screen.draw.text("GAME OVER", midbottom=screen_middle, fontsize = GRID_SIZE, color = "cyan", owidth=1)
+    
+    if player_won:
+        screen.draw.text("YOU WON!", midtop=screen_middle, fontsize=GRID_SIZE, color = "green", owidth=1)
+    else:
+        screen.draw.text("YOU LOST!", midtop=screen_middle, fontsize=GRID_SIZE, color = "red", owidth=1)
 
 def draw_actors():
     player.draw()
     for key in keys_to_collect:
         key.draw()
+    for guard in guards:
+        guard.draw()
 
 def draw():
     draw_background() 
@@ -82,7 +94,7 @@ def on_key_down(key):
         move_player(0,1)
     
 def move_player (dx, dy):
-    global game_over
+    global game_over, player_won
     if game_over:
         return
     (x, y) = grid_coords(player)
@@ -96,6 +108,7 @@ def move_player (dx, dy):
             return
         else: 
             game_over = True
+            player_won = True
     for key in keys_to_collect:
         (key_x, key_y) = grid_coords(key)
         if x == key_x and y == key_y:
@@ -127,4 +140,5 @@ def move_guards():
         move_guard(guard)
 
 setup_game()
+clock.schedule_interval(move_guards, GUARD_MOVE_INTERVAL)
 pgzrun.go()
