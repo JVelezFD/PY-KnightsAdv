@@ -4,6 +4,7 @@ GRID_WIDTH = 16
 GRID_HEIGHT = 12
 GRID_SIZE = 50
 GUARD_MOVE_INTERVAL = 0.5
+PLAYER_MOVE_INTERVAL = 0.1
 
 WIDTH = GRID_WIDTH * GRID_SIZE 
 HEIGHT = GRID_HEIGHT * GRID_SIZE
@@ -68,6 +69,7 @@ def draw_game_over():
         screen.draw.text("YOU WON!", midtop=screen_middle, fontsize=GRID_SIZE, color = "green", owidth=1)
     else:
         screen.draw.text("YOU LOST!", midtop=screen_middle, fontsize=GRID_SIZE, color = "red", owidth=1)
+    screen.draw.text("Press SPACE to play again", midtop=(WIDTH/2, HEIGHT/2 + GRID_SIZE), fontsize=GRID_SIZE/2, color= "cyan", owidth=1)
 
 def draw_actors():
     player.draw()
@@ -82,6 +84,10 @@ def draw():
     draw_actors()
     if game_over:
         draw_game_over()
+        
+def on_key_up(key):
+    if key == keys.SPACE and game_over:
+        setup_game()
     
 def on_key_down(key):
     if key == keys.LEFT:
@@ -114,6 +120,7 @@ def move_player (dx, dy):
         if x == key_x and y == key_y:
             keys_to_collect.remove(key)
             break
+        animate(player, pos=screen_coords(x,y), duration=PLAYER_MOVE_INTERVAL)
     player.pos = screen_coords(x, y)
     
 def move_guard(guard):
@@ -132,6 +139,7 @@ def move_guard(guard):
     elif player_y < guard_y and MAP[guard_y - 1] [guard_x] != "W":
         guard_y -= 1
     guard.pos = screen_coords(guard_x, guard_y)
+    animate(guard, pos=screen_coords(guard_x, guard_y), duration=GUARD_MOVE_INTERVAL)
     if guard_x == player_x and guard_y == player_y:
         game_over = True
         
